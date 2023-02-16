@@ -2,8 +2,10 @@
 
 
 #include "SCharacter.h"
-#include "Runtime/Engine/Classes/GameFramework/SpringArmComponent.h"
-#include "Runtime/Engine/Classes/Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 // Sets default values
@@ -16,6 +18,10 @@ ASCharacter::ASCharacter()
 	SpringArmComponent->SetupAttachment(RootComponent);
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	bUseControllerRotationYaw = false;
+	SpringArmComponent->bUsePawnControlRotation = true;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 // Called when the game starts or when spawned
@@ -27,7 +33,22 @@ void ASCharacter::BeginPlay()
 
 void ASCharacter::Moveforward(float InVal)
 {
-	AddMovementInput(GetActorForwardVector(), InVal);
+	FRotator ControlRoa = GetControlRotation();
+	ControlRoa.Pitch = 0.f;
+	ControlRoa.Roll = 0.f;
+
+	AddMovementInput(ControlRoa.Vector(), InVal);
+}
+
+void ASCharacter::MoveRight(float InVal)
+{
+	FRotator ControlRoa = GetControlRotation();
+	ControlRoa.Pitch = 0.f;
+	ControlRoa.Roll = 0.f;
+
+	FVector RightVector = UKismetMathLibrary::GetRightVector(ControlRoa);
+
+	AddMovementInput(RightVector, InVal);
 }
 
 // Called every frame
@@ -43,6 +64,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAxis("Moveforward", this, &ASCharacter::Moveforward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ASCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 }
 
