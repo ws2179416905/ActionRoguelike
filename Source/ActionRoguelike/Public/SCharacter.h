@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -8,6 +8,8 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class USInteractionComponent;
+class UAnimMontage;
 
 
 UCLASS()
@@ -19,10 +21,21 @@ public:
 	// Sets default values for this character's properties
 	ASCharacter();
 
-	UPROPERTY(VisibleAnywhere)
-	USpringArmComponent* SpringArmComponent;
-	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* CameraComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		USpringArmComponent* SpringArmComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		UCameraComponent* CameraComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+		TSubclassOf<AActor> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+		UAnimMontage* AttackAnim;
+
+	FTimerHandle TimerHandle_PrimaryAttack;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		USInteractionComponent* InteractionComp;
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,8 +43,11 @@ protected:
 
 	void Moveforward(float InVal);
 	void MoveRight(float InVal);
+	void PrimaryAttack();
+	void PrimaryAttack_TimeElapsed();
+	void PrimaryInteract();
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
