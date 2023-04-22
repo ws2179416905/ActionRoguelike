@@ -10,6 +10,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class USInteractionComponent;
 class UAnimMontage;
+class USAttributeComponent;
 
 
 UCLASS()
@@ -26,7 +27,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		UCameraComponent* CameraComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 		TSubclassOf<AActor> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
@@ -36,6 +37,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		USInteractionComponent* InteractionComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attribute")
+		USAttributeComponent* AttributeComp;
 
 protected:
 	// Called when the game starts or when spawned
